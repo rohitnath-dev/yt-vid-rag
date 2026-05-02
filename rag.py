@@ -5,6 +5,7 @@ import requests
 from typing import List, TypedDict, Literal
 
 from pydantic import BaseModel, Field
+import streamlit as st
 
 from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
@@ -15,34 +16,33 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langgraph.graph import StateGraph, START, END
 
-from dotenv import load_dotenv
-load_dotenv()
-
 class OpenRouterLLM:
     def __init__(self, model="mistralai/mistral-7b-instruct"):
-        self.api_key = os.getenv("OPENROUTER_API_KEY")
+        self.api_key = st.secrets["OPENROUTER_API_KEY"]
         self.model = model
         self.url = "https://openrouter.ai/api/v1/chat/completions"
 
     def invoke(self, prompt):
-        headers = {
-            "Authorization": f"Bearer {self.api_key}",
-            "Content-Type": "application/json",
-        }
+    headers = {
+        "Authorization": f"Bearer {self.api_key}",
+        "Content-Type": "application/json",
+    }
 
-        data = {
-            "model": self.model,
-            "messages": [
-                {"role": "user", "content": prompt}
-            ],
-        }
+    data = {
+        "model": self.model,
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+    }
 
-        response = requests.post(self.url, headers=headers, json=data)
+    response = requests.post(self.url, headers=headers, json=data)
 
-        try:
-            return response.json()["choices"][0]["message"]["content"]
-        except:
-            return "Error generating response"
+    try:
+        result = response.json()
+        return result["choices"][0]["message"]["content"]
+    except Exception as e:
+        print("FULL ERROR:", response.text)
+        return f"Error: {response.text}"
             
 llm = OpenRouterLLM()
 
