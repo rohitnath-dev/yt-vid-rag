@@ -11,3 +11,5 @@ langgraph
 
 faiss-cpu
 sentence-transformers
+
+streamlit 
