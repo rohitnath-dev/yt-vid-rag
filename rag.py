@@ -17,7 +17,7 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langgraph.graph import StateGraph, START, END
 
 class OpenRouterLLM:
-    def __init__(self, model="mistralai/mistral-7b-instruct"):
+    def __init__(self, model="openai/gpt-4o-mini"):
         self.api_key = st.secrets["OPENROUTER_API_KEY"]
         self.model = model
         self.url = "https://openrouter.ai/api/v1/chat/completions"
