@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    #chat {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+    }
+
+    .msg {
+      margin: 10px 0;
+      max-width: 80%;
+    }
+
+    .user {
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .bot {
+      margin-right: auto;
+      text-align: left;
+    }
+
+    #inputArea {
+      display: flex;
+      border-top: 1px solid #ccc;
+    }
+
+    input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      font-size: 16px;
+      outline: none;
+    }
+
+    button {
+      padding: 12px 16px;
+      border: none;
+      background: black;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<div id="chat"></div>
+
+<div id="inputArea">
+  <input id="input" placeholder="Ask your doubt..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+
+window.onload = () => {
+  typeMessage(
+    "I'm your AI assistant. You can ask anything from videos, notes, or study-related doubts.",
+    "bot"
+  );
+};
+
+function addMessage(text, sender) {
+  const div = document.createElement("div");
+  div.className = "msg " + sender;
+  div.innerText = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function typeMessage(text, sender) {
+  const div = document.createElement("div");
+  div.className = "msg " + sender;
+  chat.appendChild(div);
+
+  let i = 0;
+  const interval = setInterval(() => {
+    div.innerText += text[i];
+    i++;
+    chat.scrollTop = chat.scrollHeight;
+
+    if (i >= text.length) clearInterval(interval);
+  }, 15);
+}
+
+async function sendMessage() {
+  const question = input.value.trim();
+  if (!question) return;
+
+  addMessage(question, "user");
+  input.value = "";
+
+  const loading = document.createElement("div");
+  loading.className = "msg bot";
+  loading.innerText = "Typing...";
+  chat.appendChild(loading);
+
+  try {
+    const res = await fetch("http://127.0.0.1:8000/ask", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ question })
+    });
+
+    const data = await res.json();
+
+    chat.removeChild(loading);
+    typeMessage(data.answer, "bot");
+
+  } catch (err) {
+    chat.removeChild(loading);
+    addMessage("Server error.", "bot");
+  }
+}
+
+input.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
+});
+</script>
+
+</body>
+  </html>
