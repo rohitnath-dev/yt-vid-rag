@@ -4,8 +4,9 @@ langchain-community
 langchain-core
 langgraph
 faiss-cpu
-sentence-transformers
+sentence-transformers==2.2.2
+transformers==4.36.2
+torch==2.2.2
 pydantic
 requests
 python-dotenv
-torch==2.2.2
