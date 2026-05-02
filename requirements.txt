@@ -3,7 +3,6 @@ streamlit
 langchain==0.2.3
 langchain-core==0.2.5
 langchain-community==0.2.4
-
 langgraph==0.0.55
 
 faiss-cpu==1.7.4
@@ -11,6 +10,8 @@ faiss-cpu==1.7.4
 sentence-transformers==2.2.2
 transformers==4.36.2
 torch==2.2.2
+
+huggingface-hub==0.20.3
 
 pydantic==2.7.1
 requests
